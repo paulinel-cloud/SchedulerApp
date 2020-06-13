@@ -195,8 +195,7 @@ public class TaskController {
     }
 
     public int traverseTree(ArrayList<Task> tree, double [] compare, int dim, int i, double best_dist, int best_node, double [] hyperRect) {
-
-        if(i == -1 || calculateRectDist(compare, hyperRect) > best_dist && tree.get(i).getAncestry() != "none") { //if node is a leaf (can't traverse anymore, end recursion)
+        if(i == -1 || calculateRectDist(compare, hyperRect) > best_dist) { //if node is a leaf or out of bounding box (too far away)
             return best_node;
         }
 
