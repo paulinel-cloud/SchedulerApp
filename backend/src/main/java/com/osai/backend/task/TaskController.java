@@ -183,7 +183,7 @@ public class TaskController {
 
         ArrayList<Task> results = new ArrayList<Task>();
         double[] hyperRect = {Double.MIN_VALUE, Double.MAX_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, Double.MIN_VALUE, Double.MAX_VALUE};
-        for(int i = 0; i < 1; i++){
+        for(int i = 0; i < 10; i++){
             best = traverseTree(tree, compare, depth, 0, Double.MAX_VALUE, 0, hyperRect);
             results.add(tree.get(best));
             tree.get(best).setAncestry("none");
@@ -196,7 +196,7 @@ public class TaskController {
 
     public int traverseTree(ArrayList<Task> tree, double [] compare, int dim, int i, double best_dist, int best_node, double [] hyperRect) {
 
-        if(i == -1 || calculateRectDist(compare, hyperRect) > best_dist) { //if node is a leaf (can't traverse anymore, end recursion)
+        if(i == -1 || calculateRectDist(compare, hyperRect) > best_dist && tree.get(i).getAncestry() != "none") { //if node is a leaf (can't traverse anymore, end recursion)
             return best_node;
         }
 
@@ -204,33 +204,33 @@ public class TaskController {
         int left = tree.get(i).getLeftChild(); 
         int right = tree.get(i).getRightChild();
         
-        if(distance < best_dist) {
+        if(distance < best_dist && tree.get(i).getAncestry() != "none") {
             best_node = i;
             best_dist = distance;
         }
-        System.out.println("The best node is " + String.valueOf(tree.get(best_node).getId()) + " and the distance value is " + String.valueOf(distance) + " when best_dist is " + String.valueOf(best_dist)+ " and the curr task is "+String.valueOf(tree.get(i).getId()));
+        //System.out.println("The best node is " + String.valueOf(tree.get(best_node).getId()) + " and the distance value is " + String.valueOf(distance) + " when best_dist is " + String.valueOf(best_dist)+ " and the curr task is "+String.valueOf(tree.get(i).getId()));
         if(dim != 3 && compare[dim] < getDepthValue(dim, tree.get(i))){
-            System.out.println("Went left in normal function");
+            //System.out.println("Went left in normal function");
             best_node = traverseTree(tree, compare, (dim+1)%4, left, best_dist, best_node, trimHyperRectLeft(tree.get(i), hyperRect, dim)); //will return some leaf node and assign it to var best 
             best_dist = calculateWeight(tree.get(best_node), compare);
             best_node = traverseTree(tree, compare, (dim+1)%4, right, best_dist, best_node, trimHyperRectRight(tree.get(i), hyperRect, dim));
             best_dist = calculateWeight(tree.get(best_node), compare);
         }
         else if (dim == 3 &&  (Math.sqrt(Math.pow(compare[3], 2) + Math.pow(compare[4], 2)) < getDepthValue(dim, tree.get(i)))){
-            System.out.println("reached!");
+            //System.out.println("reached!");
             best_node = traverseTree(tree, compare, (dim+1)%4, left, best_dist, best_node, trimHyperRectLeft(tree.get(i), hyperRect, dim)); //will return some leaf node and assign it to var best 
             best_dist = calculateWeight(tree.get(best_node), compare);
             best_node = traverseTree(tree, compare, (dim+1)%4, right, best_dist, best_node, trimHyperRectRight(tree.get(i), hyperRect, dim));
             best_dist = calculateWeight(tree.get(best_node), compare);
         }
         else {
-            System.out.println("Went right");
+            //System.out.println("Went right");
             best_node = traverseTree(tree, compare, (dim+1)%4, right, best_dist, best_node, trimHyperRectRight(tree.get(i), hyperRect, dim)); //will return some leaf node and assign it to var best 
             best_dist = calculateWeight(tree.get(best_node), compare);
             best_node = traverseTree(tree, compare, (dim+1)%4, left, best_dist, best_node, trimHyperRectLeft(tree.get(i), hyperRect, dim));
             best_dist = calculateWeight(tree.get(best_node), compare);
         }
-        System.out.println("Best node is "+String.valueOf(tree.get(best_node).getId()));
+        //System.out.println("Best node is "+String.valueOf(tree.get(best_node).getId()));
         return best_node;   
     }
 
